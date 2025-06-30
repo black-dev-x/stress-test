@@ -12,10 +12,13 @@ type Report struct {
 	statusCodes     map[int]int
 }
 
-func (r *Report) Print() {
+func clear() {
 	cmd := exec.Command("cmd", "/c", "cls")
 	cmd.Stdout = os.Stdout
 	cmd.Run()
+}
+func (r *Report) Print() {
+	clear()
 	println("Total Time:", r.totalTime, "seconds")
 	println("Total Requests:", r.totalRequests)
 	println("Successful Requests:", r.successRequests)
