@@ -18,7 +18,7 @@ func clear() {
 	cmd.Run()
 }
 func (r *Report) Print() {
-	clear()
+	// clear()
 	println("Total Time:", r.totalTime, "seconds")
 	println("Total Requests:", r.totalRequests)
 	println("Successful Requests:", r.successRequests)

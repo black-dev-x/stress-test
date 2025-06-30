@@ -16,8 +16,13 @@ func DoStressTest(url string, requests, concurrency int) *Report {
 	report := newReport()
 	statusCodeChannel := make(chan int, concurrency)
 	errorChannel := make(chan error, concurrency)
+	limit := make(chan bool, concurrency)
+
 	for i := 0; i < requests; i++ {
+		println("Request", i+1, "of", requests)
+		limit <- true
 		go func() {
+			defer func() { <-limit }()
 			response, err := http.Get(url)
 			if err != nil {
 				errorChannel <- err
@@ -45,8 +50,8 @@ func DoStressTest(url string, requests, concurrency int) *Report {
 			if statusCode < 400 {
 				report.successRequests++
 			}
-		case err := <-errorChannel:
-			panic(err)
+		case <-errorChannel:
+			println("Error here?")
 		}
 	}
 
