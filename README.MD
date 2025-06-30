@@ -25,5 +25,7 @@ Distribuição de outros códigos de status HTTP (como 404, 500, etc.).
 Execução da aplicação:
 Poderemos utilizar essa aplicação fazendo uma chamada via docker. Ex:
 
+```
 docker build -t stress .
 docker run stress --url https://yoururlhere.com --requests 10000 --concurrency 10
+```

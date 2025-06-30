@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"regexp"
 	"strconv"
@@ -39,18 +38,8 @@ func extractArguments() (string, int, int) {
 }
 
 func main() {
-	println("Extracting arguments...")
 	url, requests, concurrency := extractArguments()
-	println("URL:", url)
-	println("Requests:", requests)
-	println("Concurrency:", concurrency)
-
-	println("Starting stress test...")
 	report := stress_tester.DoStressTest(url, requests, concurrency)
-
-	println("Printing last report...")
 	report.Print()
 
-	println("Stress test completed successfully.")
-	fmt.Printf("%v", os.Args)
 }
