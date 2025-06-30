@@ -18,20 +18,21 @@ func DoStressTest(url string, requests, concurrency int) *Report {
 	errorChannel := make(chan error, concurrency)
 	limit := make(chan bool, concurrency)
 
-	for i := 0; i < requests; i++ {
-		println("Request", i+1, "of", requests)
-		limit <- true
-		go func() {
-			defer func() { <-limit }()
-			response, err := http.Get(url)
-			if err != nil {
-				errorChannel <- err
-				return
-			}
-			defer response.Body.Close()
-			statusCodeChannel <- response.StatusCode
-		}()
-	}
+	go func() {
+		for i := 0; i < requests; i++ {
+			limit <- true
+			go func() {
+				defer func() { <-limit }()
+				response, err := http.Get(url)
+				if err != nil {
+					errorChannel <- err
+					return
+				}
+				defer response.Body.Close()
+				statusCodeChannel <- response.StatusCode
+			}()
+		}
+	}()
 
 	go func() {
 		for {
@@ -51,7 +52,7 @@ func DoStressTest(url string, requests, concurrency int) *Report {
 				report.successRequests++
 			}
 		case <-errorChannel:
-			println("Error here?")
+
 		}
 	}
 
