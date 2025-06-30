@@ -1,7 +1,6 @@
 package stress_tester
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 )
@@ -29,7 +28,16 @@ func DoStressTest(url string, requests, concurrency int) *Report {
 		}()
 	}
 
+	go func() {
+		for {
+			<-time.After(time.Second * 1)
+			report.Print()
+		}
+	}()
+
 	for i := 0; i < requests; i++ {
+		endTime := time.Now().Unix()
+		report.totalTime = endTime - startTime
 		select {
 		case statusCode := <-statusCodeChannel:
 			report.statusCodes[statusCode]++
@@ -38,12 +46,10 @@ func DoStressTest(url string, requests, concurrency int) *Report {
 				report.successRequests++
 			}
 		case err := <-errorChannel:
-			fmt.Println("Error occurred:", err)
+			panic(err)
 		}
 	}
 
-	endTime := time.Now().Unix()
-	report.totalTime = endTime - startTime
 	return report
 }
 
